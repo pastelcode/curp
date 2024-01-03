@@ -1,3 +1,5 @@
+import 'package:equatable/equatable.dart';
+
 /// A Mexican CURP.
 ///
 /// It can be constructed via [Curp.parse] or [Curp.tryParse]. Then its value
@@ -5,7 +7,7 @@
 ///
 /// Provides a [isValidString] static method to check whether a string is a
 /// valid representation of a Mexican CURP.
-final class Curp {
+final class Curp with EquatableMixin {
   const Curp._({required String value}) : _value = value;
 
   /// {@template curp.parse}
@@ -71,4 +73,7 @@ final class Curp {
 
   @override
   String toString() => _value;
+
+  @override
+  List<Object?> get props => [_value];
 }
