@@ -1,4 +1,10 @@
 /// A Mexican CURP.
+///
+/// It can be constructed via [Curp.parse] or [Curp.tryParse]. Then its value
+/// can be retrieved via [toString].
+///
+/// Provides a [isValidString] static method to check whether a string is a
+/// valid representation of a Mexican CURP.
 final class Curp {
   const Curp._({required String value}) : _value = value;
 
@@ -6,18 +12,27 @@ final class Curp {
   /// Constructs a new [Curp] instance based on [input].
   /// {@endtemplate}
   ///
-  /// Throws a [FormatException] if [input] is not a valid CURP.
-  factory Curp.parse(String input) {
+  /// Throws a [FormatException] if the input is not a valid CURP.
+  factory Curp.parse(String input) => switch (Curp.isValidString(input)) {
+        true => Curp._(value: input),
+        false => throw FormatException('Invalid CURP', input),
+      };
+
+  /// The inner value of this CURP.
+  final String _value;
+
+  /// Checks whether a string is a valid representation of a CURP.
+  static bool isValidString(String string) {
     /// Generates the last digit of a CURP from the other part of the given
     /// CURP.
-    int generateCheckDigit(String input) {
-      assert(input.length == 17, '`input` length must be 17');
+    int generateCheckDigitFrom(String restOfCurp) {
+      assert(restOfCurp.length == 17, '`input` length must be 17');
 
       const dictionary = '0123456789ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
       var accumulator = 0;
       var checkDigit = 0;
-      for (var index = 0; index < input.length; index++) {
-        accumulator += dictionary.indexOf(input[index]) * (18 - index);
+      for (var index = 0; index < restOfCurp.length; index++) {
+        accumulator += dictionary.indexOf(restOfCurp[index]) * (18 - index);
       }
       checkDigit = 10 - accumulator % 10;
       if (checkDigit == 10) return 0;
@@ -30,28 +45,22 @@ final class Curp {
       '''
 [A-Z]{1}[AEIOU]{1}[A-Z]{2}[0-9]{2}(0[1-9]|1[0-2])(0[1-9]|1[0-9]|2[0-9]|3[0-1])[HM]{1}(AS|BC|BS|CC|CS|CH|CL|CM|DF|DG|GT|GR|HG|JC|MC|MN|MS|NT|NL|OC|PL|QT|QR|SP|SL|SR|TC|TS|TL|VZ|YN|ZS|NE)[B-DF-HJ-NP-TV-Z]{3}[0-9A-Z]{1}[0-9]{1}''',
     );
-    final hasMatch = regex.hasMatch(input);
+    final hasMatch = regex.hasMatch(string);
     if (!hasMatch) {
-      throw FormatException('Invalid CURP', input);
+      return false;
     }
 
     // The second part to validate is the match between the check digit (last
     // digit) of the CURP given by the input and a generated one.
-    final curpWithoutCheckDigit = input.substring(0, input.length - 1);
-    final generatedCheckDigit = generateCheckDigit(curpWithoutCheckDigit);
-    final isValid = input.endsWith(generatedCheckDigit.toString());
-    if (!isValid) {
-      throw FormatException('Invalid CURP', input);
-    }
-    return Curp._(value: input);
+    final curpWithoutCheckDigit = string.substring(0, string.length - 1);
+    final generatedCheckDigit =
+        generateCheckDigitFrom(curpWithoutCheckDigit).toString();
+    return string.endsWith(generatedCheckDigit);
   }
-
-  /// The inner value of this CURP.
-  final String _value;
 
   /// {@macro curp.parse}
   ///
-  /// Returns `null` if [input] is not a valid CURP.
+  /// Returns `null` if the input is not a valid CURP.
   static Curp? tryParse(String input) {
     try {
       return Curp.parse(input);

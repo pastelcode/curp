@@ -11,29 +11,57 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages).
 -->
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+# CURP
+
+Developed with `passion` by Pastel Code.
+
+[![style: very good analysis](https://img.shields.io/badge/style-very_good_analysis-B22C89.svg)](https://pub.dev/packages/very_good_analysis)
+
+---
+
+A package to easily validate and parse a Mexican CURP.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- A `Curp` object can be constructed via `parse` or `tryParse`.
+- Provides a `isValidString` static method to check whether a string is a valid representation of a CURP.
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+To start using the package is required to import it like following:
+
+```dart
+import 'package:curp/curp.dart';
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+### Parse a string to a `Curp` object.
 
 ```dart
-const like = 'sample';
+const curpString = '...';
+Curp.parse(curpString); // It returns a Curp object or throws a FormatException.
+Curp.tryParse(curpString); // It returns a Curp object or null.
+```
+
+### Retrieve CURP string
+
+After parsing a `Curp` object its value can be retrieved with:
+
+```dart
+final curp = Curp.parse('...');
+final curpString = curp.toString();
+```
+
+### Validate a CURP like string
+
+Check whether a string is a valid CURP representation.
+
+```dart
+const curpString = '...';
+final isValid = Curp.isValidString(curpString); // true or false
 ```
 
 ## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+For more information about CURP, head to official Mexican government website: https://www.gob.mx/curp/.
