@@ -48,4 +48,24 @@ void main() {
       expect(curp, null);
     });
   });
+
+  test('returns true for a valid CURP string representation', () {
+    // Given
+
+    // When
+    final isValid = Curp.isValidString(validCurpString);
+
+    // Then
+    expect(isValid, true);
+  });
+
+  test('returns false for a not valid CURP string representation', () {
+    // Given
+
+    // When
+    final isValid = Curp.isValidString(wrongCurpString);
+
+    // Then
+    expect(isValid, false);
+  });
 }
